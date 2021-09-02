@@ -14,4 +14,6 @@ todos:
 - [ ] Pypi
 - [ ] Demo app
 - [ ] Cli
+- [ ] Session and Cookies
+- [ ] Authentication
 - Others
