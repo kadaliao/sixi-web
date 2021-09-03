@@ -1,4 +1,11 @@
+import inspect
+from typing import Callable, Tuple, Dict, TypeVar, Any, Optional
 from webob import Request, Response
+from webob.exc import HTTPNotFound
+from parse import parse
+
+F = TypeVar("F", bound=Callable[..., Any])
+VF_ARGS = TypeVar("VF_ARGS", bound=Tuple[Optional[Callable], Optional[Dict]])
 
 
 class API:
@@ -6,33 +13,49 @@ class API:
         self.routes = {}
 
     def __call__(self, environ, start_response):
-        request = Request(environ)
-        response = self.handle_request(request)
-        return response(environ, start_response)
+        req = Request(environ)
+        resp = self.despatch_request(req)
+        return resp(environ, start_response)
 
-    def default_response(self, response):
-        response = Response()
-        response.status_code = 404
-        response.text = "Not found."
+    # def default_response(self, response):
+    #     response.status_code = 404
+    #     response.text = "Not found."
 
-    def find_handler(self, request_path):
-        for path, handler in self.routes.items():
-            if path == request_path:
-                return handler
+    def find_view_and_kwargs(self, path: str) -> VF_ARGS:
+        """Find matching view function and parse parameters."""
 
-    def handle_request(self, request):
-        response = Response()
-        handler = self.find_handler(request_path=request.path)
-        if handler is not None:
-            handler(request, response)
+        for rule, view_func in self.routes.items():
+            result = parse(rule, path)
+            if result is not None:
+                return view_func, result.named
+        return None, None
+
+    def despatch_request(self, req: Request) -> Response:
+        resp = Response()
+        view_func, kwargs = self.find_view_and_kwargs(path=req.path)
+
+        if view_func is not None:
+            if inspect.isclass(view_func):
+                view_func = getattr(view_func(), req.method.lower(), None)
+                if not view_func:
+                    raise AttributeError(f"Method not allowed: {req.method}")
+            view_func(req, resp, **kwargs)
         else:
-            self.default_response(response)
+            return HTTPNotFound()
 
-        return response
+        return resp
 
-    def route(self, path):
-        def wrapper(handler):
-            self.routes[path] = handler
-            return handler
+    def route(self, rule: str) -> F:
+        """Add route entrypoint."""
 
-        return wrapper
+        view_func = self.routes.get(rule)
+        if view_func:
+            raise AssertionError(
+                f"Cannot add route entry, conflict rule with `{view_func.__module__}.{view_func.__name__}`"
+            )
+
+        def decorator(view_func: F) -> F:
+            self.routes[rule] = view_func
+            return view_func
+
+        return decorator
