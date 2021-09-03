@@ -2,9 +2,9 @@
 A simple web framework for learning purpose.
 
 todos:
-- [ ] Request handler
-- [ ] Routing
-- [ ] Class based view
+- [x] Request handler
+- [x] Routing
+- [x] Class based view
 - [ ] Unit tests
 - [ ] Template support
 - [ ] Custom exception handler
