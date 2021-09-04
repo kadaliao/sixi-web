@@ -1,4 +1,5 @@
 import pytest
+
 from sixi_web import API
 
 
