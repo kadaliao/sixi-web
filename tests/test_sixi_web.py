@@ -13,7 +13,7 @@ def test_route_adding(api):
         resp.text = "for testing"
 
 
-def test_config_route_adding(api):
+def test_conflict_route_adding(api):
     @api.route("/home")
     def home(req, resp):
         resp.text = "for testing"
@@ -80,3 +80,14 @@ def test_class_based_view_method_not_allowed(api, client):
 
     with pytest.raises(AttributeError):
         client.get("/todo")
+
+
+def test_route_adding_use_method(api, client):
+    RESP_TEXT = "route added"
+
+    def home(req, resp):
+        resp.text = RESP_TEXT
+
+    api.add_route("/", home)
+
+    assert client.get("/").text == RESP_TEXT

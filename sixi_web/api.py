@@ -1,3 +1,5 @@
+"""Sixi web framework."""
+
 import inspect
 from typing import Any, Callable, Dict, Optional, Tuple, TypeVar
 
@@ -48,17 +50,20 @@ class API:
 
         return resp
 
+    def add_route(self, rule: str, view_func: F) -> None:
+        """Add route entrypoint."""
+        if self.routes.get(rule):
+            raise AssertionError(
+                "Cannot add route entry, conflict rule"
+                f"with `{view_func.__module__}.{view_func.__name__}`"
+            )
+        self.routes[rule] = view_func
+
     def route(self, rule: str) -> F:
         """Add route entrypoint."""
 
-        view_func = self.routes.get(rule)
-        if view_func:
-            raise AssertionError(
-                f"Cannot add route entry, conflict rule with `{view_func.__module__}.{view_func.__name__}`"
-            )
-
         def decorator(view_func: F) -> F:
-            self.routes[rule] = view_func
+            self.add_route(rule, view_func)
             return view_func
 
         return decorator
