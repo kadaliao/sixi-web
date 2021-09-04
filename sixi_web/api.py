@@ -3,6 +3,9 @@ from typing import Callable, Tuple, Dict, TypeVar, Any, Optional
 from webob import Request, Response
 from webob.exc import HTTPNotFound
 from parse import parse
+from requests import Session as RequestsSession
+from wsgiadapter import WSGIAdapter as RequestsWSGIAdapter
+
 
 F = TypeVar("F", bound=Callable[..., Any])
 VF_ARGS = TypeVar("VF_ARGS", bound=Tuple[Optional[Callable], Optional[Dict]])
@@ -59,3 +62,26 @@ class API:
             return view_func
 
         return decorator
+
+    def test_client(self):
+        base_url = "http://sixi-web"
+        adapter = RequestsWSGIAdapter(self)
+
+        class TestClient:
+            def __init__(self):
+                self.session = RequestsSession()
+                self.session.mount(prefix=base_url, adapter=adapter)
+
+            def get(self, url, *args, **kwargs):
+                return self.session.get(base_url + url, *args, **kwargs)
+
+            def post(self, url, *args, **kwargs):
+                return self.session.post(base_url + url, *args, **kwargs)
+
+            def head(self, url, *args, **kwargs):
+                return self.session.head(base_url + url, *args, **kwargs)
+
+            def put(self, url, *args, **kwargs):
+                return self.session.put(base_url + url, *args, **kwargs)
+
+        return TestClient()
