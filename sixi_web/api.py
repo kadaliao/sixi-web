@@ -1,11 +1,11 @@
 import inspect
-from typing import Callable, Tuple, Dict, TypeVar, Any, Optional
-from webob import Request, Response
-from webob.exc import HTTPNotFound
+from typing import Any, Callable, Dict, Optional, Tuple, TypeVar
+
 from parse import parse
 from requests import Session as RequestsSession
+from webob import Request, Response
+from webob.exc import HTTPNotFound
 from wsgiadapter import WSGIAdapter as RequestsWSGIAdapter
-
 
 F = TypeVar("F", bound=Callable[..., Any])
 VF_ARGS = TypeVar("VF_ARGS", bound=Tuple[Optional[Callable], Optional[Dict]])
