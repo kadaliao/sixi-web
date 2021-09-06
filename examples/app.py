@@ -31,3 +31,8 @@ class TodoResource:
 
     def post(self, req, resp):
         resp.text = "Create a task"
+
+
+@app.route("/html")
+def html(req, resp):
+    resp.text = app.template("index.html", context=dict(title="hi", name="kada"))

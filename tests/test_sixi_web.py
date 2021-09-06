@@ -91,3 +91,15 @@ def test_route_adding_use_method(api, client):
     api.add_route("/", home)
 
     assert client.get("/").text == RESP_TEXT
+
+
+def test_template(api, client):
+    @api.route("/html")
+    def html_view(req, resp):
+        resp.body = api.template("index.html", context=dict(title="Test Title", name="Test Name")).encode()
+
+    resp = client.get("/html")
+
+    assert "text/html" in resp.headers["Content-Type"]
+    assert "Test Title" in resp.text
+    assert "Test Name" in resp.text
