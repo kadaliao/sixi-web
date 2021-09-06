@@ -53,10 +53,7 @@ class API:
     def add_route(self, rule: str, view_func: F) -> None:
         """Add route entrypoint."""
         if self.routes.get(rule):
-            raise AssertionError(
-                "Cannot add route entry, conflict rule"
-                f"with `{view_func.__module__}.{view_func.__name__}`"
-            )
+            raise AssertionError("Cannot add route entry, conflict rule with `{view_func.__module__}.{view_func.__name__}`")
         self.routes[rule] = view_func
 
     def route(self, rule: str) -> F:
