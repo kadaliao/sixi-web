@@ -1,9 +1,9 @@
 from sixi_web import API
 
-app = API()
+app = API(templates_dir="templates", static_dir="static")
 
 
-@app.route("/")
+@app.route("/home")
 def index(req, resp):
     resp.text = "Hello world"
 
@@ -33,6 +33,7 @@ class TodoResource:
         resp.text = "Create a task"
 
 
+@app.route("/")
 @app.route("/html")
 def html(req, resp):
     resp.text = app.template("index.html", context=dict(title="hi", name="kada"))
@@ -40,9 +41,4 @@ def html(req, resp):
 
 @app.error_handler(AttributeError)
 def attribute_handler(req, resp, e):
-    print(e)
-
-
-@app.error_handler(AttributeError)
-def attribute_handler2(req, resp, e):
     print(e)
