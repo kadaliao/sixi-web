@@ -10,7 +10,7 @@ todos:
 - [x] Template support
 - [x] Custom exception handler
 - [x] Static files serving
-- [ ] Middleware
+- [x] Middleware
 - [ ] ORM
 - [ ] Pypi
 - [ ] Demo app

@@ -1,6 +1,6 @@
 import pytest
 
-from sixi_web import API, __version__
+from sixi_web import API, Middleware, __version__
 
 CSS_FILE_DIR = "css"
 CSS_FILE_NAME = "main.css"
@@ -192,7 +192,49 @@ def test_assets_are_served(tmpdir_factory):
     api = API(static_dir=str(static_dir))
     client = api.test_client()
 
-    resp = client.get(f"/{CSS_FILE_DIR}/{CSS_FILE_NAME}")
+    resp = client.get(f"/static/{CSS_FILE_DIR}/{CSS_FILE_NAME}")
 
     assert resp.status_code == 200
     assert resp.text == CSS_FILE_CONTENTS
+
+
+def test_middleware_methods_are_called(api, client):
+    process_request_called = False
+    process_response_called = False
+
+    class TestMiddlewareMethods(Middleware):
+        def __init__(self, app):
+            super().__init__(app)
+
+        def process_request(self, req):
+            nonlocal process_request_called
+            process_request_called = True
+            print(f"{self}.process_response called")
+            print("🤖", req)
+
+        def process_response(self, req, resp):
+            nonlocal process_response_called
+            process_response_called = True
+            print(f"{self}.process_response called")
+
+    api.add_middleware(TestMiddlewareMethods)
+
+    @api.route("/")
+    def index(req, resp):
+        resp.text = "Sixi"
+
+    client.get("/")
+
+    assert process_request_called is True
+    assert process_response_called is True
+
+
+def test_allowed_methods_for_function_based_views(api, client):
+    @api.route("/home", allowed_methods=["post"])
+    def home(req, resp):
+        resp.text = "testing"
+
+    with pytest.raises(AttributeError):
+        client.get("/home")
+
+    assert client.post("/home").text == "testing"
