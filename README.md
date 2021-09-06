@@ -11,6 +11,7 @@ todos:
 - [x] Custom exception handler
 - [x] Static files serving
 - [x] Middleware
+- [x] Custom response
 - [ ] ORM
 - [ ] Pypi
 - [ ] Demo app
