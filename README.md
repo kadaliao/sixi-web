@@ -9,7 +9,7 @@ todos:
 - [x] CI
 - [x] Template support
 - [x] Custom exception handler
-- [ ] Static files serving
+- [x] Static files serving
 - [ ] Middleware
 - [ ] ORM
 - [ ] Pypi
