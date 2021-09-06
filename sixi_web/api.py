@@ -1,8 +1,9 @@
 """Sixi web framework."""
-
 import inspect
+import os
 from typing import Any, Callable, Dict, Optional, Tuple, TypeVar
 
+from jinja2 import Environment, FileSystemLoader
 from parse import parse
 from requests import Session as RequestsSession
 from webob import Request, Response
@@ -14,8 +15,9 @@ VF_ARGS = TypeVar("VF_ARGS", bound=Tuple[Optional[Callable], Optional[Dict]])
 
 
 class API:
-    def __init__(self):
+    def __init__(self, templates_dir="templates"):
         self.routes = {}
+        self.templates_env = Environment(loader=FileSystemLoader(os.path.abspath(templates_dir)), autoescape=True)
 
     def __call__(self, environ, start_response):
         req = Request(environ)
@@ -87,3 +89,8 @@ class API:
                 return self.session.put(base_url + url, *args, **kwargs)
 
         return TestClient()
+
+    def template(self, template_name, context=None):
+        if context is None:
+            context = {}
+        return self.templates_env.get_template(template_name).render(**context)

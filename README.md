@@ -7,7 +7,7 @@ todos:
 - [x] Class based view
 - [x] Unit tests
 - [x] CI
-- [ ] Template support
+- [x] Template support
 - [ ] Custom exception handler
 - [ ] Static files serving
 - [ ] Middleware
