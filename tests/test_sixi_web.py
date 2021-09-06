@@ -103,3 +103,44 @@ def test_template(api, client):
     assert "text/html" in resp.headers["Content-Type"]
     assert "Test Title" in resp.text
     assert "Test Name" in resp.text
+
+
+def test_custom_error_handler(api, client):
+    def error_handler(req, resp, error):
+        resp.text = f"Exception occured: {str(error)}"
+
+    api.add_error_handler(AttributeError, error_handler)
+
+    @api.route("/error")
+    def error(req, resp):
+        resp.status_code = 400
+        raise AttributeError("This should not be seen")
+
+    resp = client.get("/error")
+    assert "Exception occured" in resp.text
+
+
+def test_custom_error_handler_decorator(api, client):
+    @api.error_handler(AttributeError)
+    def error_handler(req, resp, error):
+        resp.text = f"Exception occured: {str(error)}"
+
+    @api.route("/error")
+    def error(req, resp):
+        resp.status_code = 400
+        raise AttributeError("This should not be seen")
+
+    resp = client.get("/error")
+    assert "Exception occured" in resp.text
+
+
+def test_conflict_custom_error_handler(api):
+    @api.error_handler(AttributeError)
+    def error_handler(req, resp, error):
+        resp.text = f"Exception occured: {str(error)}"
+
+    with pytest.raises(AssertionError):
+
+        @api.error_handler(AttributeError)
+        def error_handler2(req, resp, error):
+            resp.text = f"Exception occured: {str(error)}"

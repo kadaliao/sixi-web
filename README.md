@@ -8,7 +8,7 @@ todos:
 - [x] Unit tests
 - [x] CI
 - [x] Template support
-- [ ] Custom exception handler
+- [x] Custom exception handler
 - [ ] Static files serving
 - [ ] Middleware
 - [ ] ORM
