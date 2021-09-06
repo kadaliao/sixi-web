@@ -8,6 +8,7 @@ from parse import parse
 from requests import Session as RequestsSession
 from webob import Request, Response
 from webob.exc import HTTPNotFound
+from whitenoise import WhiteNoise
 from wsgiadapter import WSGIAdapter as RequestsWSGIAdapter
 
 F = TypeVar("F", bound=Callable[..., Any])
@@ -15,12 +16,23 @@ VF_ARGS = TypeVar("VF_ARGS", bound=Tuple[Optional[Callable], Optional[Dict]])
 
 
 class API:
-    def __init__(self, templates_dir="templates"):
+    def __init__(self, templates_dir=None, static_dir=None):
         self.routes = {}
         self.error_handlers = {}
-        self.templates_env = Environment(loader=FileSystemLoader(os.path.abspath(templates_dir)), autoescape=True)
+        self.templates_env = None
+        self.whitenoise = None
+
+        if templates_dir:
+            self.templates_env = Environment(loader=FileSystemLoader(os.path.abspath(templates_dir)), autoescape=True)
+        if static_dir:
+            self.whitenoise = WhiteNoise(self.wsgi_app, root=static_dir)
 
     def __call__(self, environ, start_response):
+        if self.whitenoise:
+            return self.whitenoise(environ, start_response)
+        return self.wsgi_app(environ, start_response)
+
+    def wsgi_app(self, environ, start_response):
         req = Request(environ)
         resp = self.despatch_request(req)
         return resp(environ, start_response)
@@ -103,6 +115,8 @@ class API:
         return TestClient()
 
     def template(self, template_name: str, context: Dict = None):
+        if not self.templates_env:
+            raise AttributeError("API instance initiated with no templates_dir.")
         if context is None:
             context = {}
         return self.templates_env.get_template(template_name).render(**context)

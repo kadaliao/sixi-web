@@ -1,6 +1,37 @@
 import pytest
 
-from sixi_web import __version__
+from sixi_web import API, __version__
+
+CSS_FILE_DIR = "css"
+CSS_FILE_NAME = "main.css"
+CSS_FILE_CONTENTS = "body {back_ground-color: red}"
+
+TEMPLATE_FILE_NAME = "index.html"
+TEMPLATE_FILE_CONTENTS = """
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{{ title }}</title>
+  </head>
+  <body>
+    <h1>{{ name }}</h1>
+  </body>
+</html>
+"""
+
+
+def _create_static(static_dir):
+    asset = static_dir.mkdir(CSS_FILE_DIR).join(CSS_FILE_NAME)
+    asset.write(CSS_FILE_CONTENTS)
+    return asset
+
+
+def _create_templates(static_dir):
+    asset = static_dir.join(TEMPLATE_FILE_NAME)
+    asset.write(TEMPLATE_FILE_CONTENTS)
+    return asset
 
 
 def test_version():
@@ -93,10 +124,15 @@ def test_route_adding_use_method(api, client):
     assert client.get("/").text == RESP_TEXT
 
 
-def test_template(api, client):
+def test_template(tmpdir_factory):
+    templates_dir = tmpdir_factory.mktemp("templates")
+    _create_templates(templates_dir)
+    api = API(templates_dir=str(templates_dir))
+    client = api.test_client()
+
     @api.route("/html")
     def html_view(req, resp):
-        resp.body = api.template("index.html", context=dict(title="Test Title", name="Test Name")).encode()
+        resp.body = api.template(TEMPLATE_FILE_NAME, context=dict(title="Test Title", name="Test Name")).encode()
 
     resp = client.get("/html")
 
@@ -144,3 +180,19 @@ def test_conflict_custom_error_handler(api):
         @api.error_handler(AttributeError)
         def error_handler2(req, resp, error):
             resp.text = f"Exception occured: {str(error)}"
+
+
+def test_404_if_no_static_file(client):
+    assert client.get("/main.css").status_code == 404
+
+
+def test_assets_are_served(tmpdir_factory):
+    static_dir = tmpdir_factory.mktemp("static")
+    _create_static(static_dir)
+    api = API(static_dir=str(static_dir))
+    client = api.test_client()
+
+    resp = client.get(f"/{CSS_FILE_DIR}/{CSS_FILE_NAME}")
+
+    assert resp.status_code == 200
+    assert resp.text == CSS_FILE_CONTENTS
