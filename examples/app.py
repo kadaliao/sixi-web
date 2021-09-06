@@ -1,6 +1,19 @@
-from sixi_web import API
+from sixi_web import API, Middleware
 
 app = API(templates_dir="templates", static_dir="static")
+
+
+class PrintingMiddleware(Middleware):
+    def process_request(self, req):
+        print("🤖", req)
+        print("\n\n\n\n")
+
+    def process_response(self, req, resp):
+        print("🥛", resp)
+        print("\n\n\n\n")
+
+
+app.add_middleware(PrintingMiddleware)
 
 
 @app.route("/home")
