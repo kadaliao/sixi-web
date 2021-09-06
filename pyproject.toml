@@ -2,7 +2,10 @@
 name = "sixi-web"
 version = "0.1.0"
 description = ""
-authors = ["liaoxingyi <liaoxingyi@douban.com>"]
+authors = ["Kada Liao <kadaliao@gmail.com>"]
+
+[tool.black]
+line-length = 179
 
 [tool.poetry.dependencies]
 python = "^3.9"
