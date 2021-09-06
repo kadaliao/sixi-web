@@ -36,3 +36,13 @@ class TodoResource:
 @app.route("/html")
 def html(req, resp):
     resp.text = app.template("index.html", context=dict(title="hi", name="kada"))
+
+
+@app.error_handler(AttributeError)
+def attribute_handler(req, resp, e):
+    print(e)
+
+
+@app.error_handler(AttributeError)
+def attribute_handler2(req, resp, e):
+    print(e)
