@@ -238,3 +238,57 @@ def test_allowed_methods_for_function_based_views(api, client):
         client.get("/home")
 
     assert client.post("/home").text == "testing"
+
+
+def test_json_response(api, client):
+    @api.route("/json")
+    def json(req, resp):
+        resp.json = dict(name="sixi")
+
+    resp = client.get("/json")
+    json_body = resp.json()
+
+    assert resp.headers["Content-Type"] == "application/json"
+    assert json_body["name"] == "sixi"
+
+
+def test_html_response(tmpdir_factory):
+    templates_dir = tmpdir_factory.mktemp("html")
+    _create_templates(templates_dir)
+    api = API(templates_dir=str(templates_dir))
+    client = api.test_client()
+
+    @api.route("/html")
+    def html(req, resp):
+        resp.html = api.template("index.html", context=dict(title="sixi", name="web framework"))
+
+    resp = client.get("/html")
+
+    assert "text/html" in resp.headers["Content-Type"]
+    assert "sixi" in resp.text
+    assert "web framework" in resp.text
+
+
+def test_text_response(api, client):
+    resp_text = "plain text"
+
+    @api.route("/text")
+    def text(req, resp):
+        resp.text = resp_text
+
+    resp = client.get("/text")
+
+    assert "text/plain" in resp.headers["Content-Type"]
+    assert resp_text == resp.text
+
+
+def test_content_type_setting_response(api, client):
+    @api.route("/body")
+    def body(req, resp):
+        resp.text = b"byte"
+        resp.content_type = "text/plain"
+
+    resp = client.get("/body")
+
+    assert "text/plain" in resp.headers["Content-Type"]
+    assert resp.text == "byte"

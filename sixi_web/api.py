@@ -6,12 +6,13 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar
 from jinja2 import Environment, FileSystemLoader
 from parse import parse
 from requests import Session as RequestsSession
-from webob import Request, Response
+from webob import Request
 from webob.exc import HTTPNotFound
 from whitenoise import WhiteNoise
 from wsgiadapter import WSGIAdapter as RequestsWSGIAdapter
 
 from .middleware import Middleware
+from .response import Response
 
 F = TypeVar("F", bound=Callable[..., Any])
 VF_ARGS = TypeVar("VF_ARGS", bound=Tuple[Optional[Callable], Optional[Dict]])

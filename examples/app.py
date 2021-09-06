@@ -49,7 +49,17 @@ class TodoResource:
 @app.route("/")
 @app.route("/html")
 def html(req, resp):
-    resp.text = app.template("index.html", context=dict(title="hi", name="kada"))
+    resp.html = app.template("index.html", context=dict(title="hi", name="kada"))
+
+
+@app.route("/text")
+def text(req, resp):
+    resp.text = "This is plain text"
+
+
+@app.route("/json")
+def json(req, resp):
+    resp.json = dict(content="this is json")
 
 
 @app.error_handler(AttributeError)
