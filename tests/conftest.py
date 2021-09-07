@@ -5,7 +5,7 @@ from sixi_web import API
 
 @pytest.fixture
 def api():
-    return API(templates_dir="tests/templates")
+    return API()
 
 
 @pytest.fixture
