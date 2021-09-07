@@ -3,19 +3,7 @@ from sixi_web import API, Middleware
 app = API(templates_dir="templates", static_dir="static")
 
 
-class PrintingMiddleware(Middleware):
-    def process_request(self, req):
-        print("🤖", req)
-        print("\n\n\n\n")
-
-    def process_response(self, req, resp):
-        print("🥛", resp)
-        print("\n\n\n\n")
-
-
-app.add_middleware(PrintingMiddleware)
-
-
+@app.route("/")
 @app.route("/home")
 def index(req, resp):
     resp.text = "Hello world"
@@ -37,8 +25,8 @@ def add(req, resp, a, b):
     resp.text = f"{a} + {b} = {result}"
 
 
-@app.route("/todo")
-class TodoResource:
+@app.route("/task")
+class Task:
     def get(self, req, resp):
         resp.text = "Get a task"
 
@@ -46,10 +34,9 @@ class TodoResource:
         resp.text = "Create a task"
 
 
-@app.route("/")
 @app.route("/html")
 def html(req, resp):
-    resp.html = app.template("index.html", context=dict(title="hi", name="kada"))
+    resp.html = app.template("index.html", context=dict(title="some title", name="some name"))
 
 
 @app.route("/text")
@@ -63,5 +50,16 @@ def json(req, resp):
 
 
 @app.error_handler(AttributeError)
-def attribute_handler(req, resp, e):
-    print(e)
+def attributeerror_handler(req, resp, e):
+    resp.text = f"I got it, {e}"
+
+
+class PrintingMiddleware(Middleware):
+    def process_request(self, req):
+        print(f"request: {req}\n\n")
+
+    def process_response(self, req, resp):
+        print(f"response: {resp}\n\n")
+
+
+app.add_middleware(PrintingMiddleware)
