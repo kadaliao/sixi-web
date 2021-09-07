@@ -1,8 +1,16 @@
 [tool.poetry]
 name = "sixi-web"
-version = "0.1.0"
-description = ""
+version = "0.1.1"
+description = "A simple web framework built for learning purpose."
 authors = ["Kada Liao <kadaliao@gmail.com>"]
+keywords = ["web", "learning"]
+readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/kadaliao/sixi-web"
+repository = "https://github.com/kadaliao/sixi-web"
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"

@@ -1,6 +1,6 @@
 import pytest
 
-from sixi_web import API, Middleware, __version__
+from sixi_web import API, Middleware
 
 CSS_FILE_DIR = "css"
 CSS_FILE_NAME = "main.css"
@@ -32,10 +32,6 @@ def _create_templates(static_dir):
     asset = static_dir.join(TEMPLATE_FILE_NAME)
     asset.write(TEMPLATE_FILE_CONTENTS)
     return asset
-
-
-def test_version():
-    assert __version__ == "0.1.0"
 
 
 def test_route_adding(api):

@@ -96,22 +96,23 @@ pip install sixi-web
 ## Roadmap
 
 
-- [x] Request handler
-- [x] Routing
-- [x] Class based view
-- [x] Unit tests
-- [x] CI
-- [x] Template support
-- [x] Custom exception handler
-- [x] Static files serving
-- [x] Middleware
-- [x] Custom response
-- [ ] Pypi
-- [ ] Authentication
-- [ ] Demo app
-- [ ] ORM
-- [ ] Cli
-- [ ] Session and Cookies
+- <del>Request handler</del>
+- <del>Routing</del>
+- <del>Class based view</del>
+- <del>Unit tests</del>
+- <del>CI</del>
+- CD
+- <del>Template support</del>
+- <del>Custom exception handler</del>
+- <del>Static files serving</del>
+- <del>Middleware</del>
+- <del>Custom response</del>
+- <del>Pypi</del>
+- Authentication
+- Demo app
+- ORM
+- Cli
+- Session and Cookies
 
 <!-- CONTRIBUTING -->
 ## Contributing
