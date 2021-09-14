@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sixi-web"
-version = "0.1.2"
+version = "0.1.4"
 description = "A simple web framework built for learning purpose."
 authors = ["Kada Liao <kadaliao@gmail.com>"]
 keywords = ["web", "learning"]
