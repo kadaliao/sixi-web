@@ -81,3 +81,72 @@ def test_save_author_instance(db, Author):
     wangwu = Author(name="Wang Wu", age=39)
     db.save(wangwu)
     assert wangwu.id == 3
+
+
+def test_query_all_authors(db, Author):
+    db.create(Author)
+
+    lisi = Author(name="lisi", age=23)
+    wangwu = Author(name="wangwu", age=25)
+    db.save(lisi)
+    db.save(wangwu)
+
+    authors = db.all(Author)
+
+    assert Author._get_select_all_sql() == ("SELECT id, age, name FROM author;", ["id", "age", "name"])
+
+    assert len(authors) == 2
+    assert type(authors[0]) == Author
+    assert {a.age for a in authors} == {23, 25}
+    assert {a.name for a in authors} == {"wangwu", "lisi"}
+
+
+def test_get_author(db, Author):
+    db.create(Author)
+    lisi = Author(name="lisi", age=43)
+    db.save(lisi)
+
+    john_from_db = db.get(Author, id=1)
+
+    assert Author._get_select_where_sql(id=1) == ("SELECT id, age, name FROM author WHERE id = ?;", ["id", "age", "name"], [1])
+    assert type(john_from_db) == Author
+    assert john_from_db.age == 43
+    assert john_from_db.name == "lisi"
+    assert john_from_db.id == 1
+
+
+def test_get_book(db, Author, Book):
+    db.create(Author)
+    db.create(Book)
+    lisi = Author(name="lisi", age=43)
+    wangwu = Author(name="wangwu", age=50)
+    book1 = Book(title="book1", published=False, author=lisi)
+    book2 = Book(title="book2", published=True, author=wangwu)
+    db.save(lisi)
+    db.save(wangwu)
+    db.save(book1)
+    db.save(book2)
+
+    book_from_db = db.get(Book, 2)
+
+    assert book_from_db.title == "book2"
+    assert book_from_db.author.name == "wangwu"
+    assert book_from_db.author.id == 2
+
+
+def test_query_all_books(db, Author, Book):
+    db.create(Author)
+    db.create(Book)
+    lisi = Author(name="lisi", age=43)
+    wangwu = Author(name="wangwu", age=50)
+    book1 = Book(title="book1", published=False, author=lisi)
+    book2 = Book(title="book2", published=True, author=wangwu)
+    db.save(lisi)
+    db.save(wangwu)
+    db.save(book1)
+    db.save(book2)
+
+    books = db.all(Book)
+
+    assert len(books) == 2
+    assert books[1].author.name == "wangwu"
