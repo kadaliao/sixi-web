@@ -56,3 +56,28 @@ def test_create_tables(db, Author, Book):
 
     for table in ("author", "book"):
         assert table in db.tables
+
+
+def test_create_author_instance(db, Author):
+    db.create(Author)
+    zhangsan = Author(name="Zhang San", age=35)
+    assert zhangsan.name == "Zhang San"
+    assert zhangsan.age == 35
+    assert zhangsan.id is None
+
+
+def test_save_author_instance(db, Author):
+    db.create(Author)
+
+    zhangsan = Author(name="Zhang San", age=23)
+    db.save(zhangsan)
+    assert zhangsan._get_insert_sql() == ("""INSERT INTO author (age, name) VALUES (?, ?);""", [23, "Zhang San"])
+    assert zhangsan.id == 1
+
+    lisi = Author(name="Li Si", age=18)
+    db.save(lisi)
+    assert lisi.id == 2
+
+    wangwu = Author(name="Wang Wu", age=39)
+    db.save(wangwu)
+    assert wangwu.id == 3
