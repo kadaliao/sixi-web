@@ -150,3 +150,29 @@ def test_query_all_books(db, Author, Book):
 
     assert len(books) == 2
     assert books[1].author.name == "wangwu"
+
+
+def test_update_author(db, Author):
+    db.create(Author)
+    zhangsan = Author(name="zhangsan", age=23)
+    db.save(zhangsan)
+
+    zhangsan.age = 43
+    zhangsan.name = "zhangsan2"
+    db.update(zhangsan)
+
+    zhangsan_from_db = db.get(Author, id=zhangsan.id)
+
+    assert zhangsan_from_db.age == 43
+    assert zhangsan_from_db.name == "zhangsan2"
+
+
+def test_delete_author(db, Author):
+    db.create(Author)
+    lisi = Author(name="lisi", age=23)
+    db.save(lisi)
+
+    db.delete(Author, id=1)
+
+    with pytest.raises(Exception):
+        db.get(Author, 1)
