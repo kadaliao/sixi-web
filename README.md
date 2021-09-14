@@ -101,16 +101,16 @@ pip install sixi-web
 - <del>Class based view</del>
 - <del>Unit tests</del>
 - <del>CI</del>
-- CD
 - <del>Template support</del>
 - <del>Custom exception handler</del>
 - <del>Static files serving</del>
 - <del>Middleware</del>
 - <del>Custom response</del>
 - <del>Pypi</del>
+- <del>ORM</del>
+- CD
 - Authentication
 - Demo app
-- ORM
 - Cli
 - Session and Cookies
 
