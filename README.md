@@ -108,7 +108,7 @@ pip install sixi-web
 - <del>Custom response</del>
 - <del>Pypi</del>
 - <del>ORM</del>
-- CD
+- <del>CD</del>
 - Authentication
 - Demo app
 - Cli
