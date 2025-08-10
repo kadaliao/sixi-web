@@ -9,6 +9,39 @@ A simple web framework built for learning purpose.
 pip install sixi-web
 ```
 
+## Development (uv)
+
+This project is configured to use `uv` for dependency management and virtualenvs.
+
+1) Create and sync the environment (includes dev tools):
+
+```sh
+uv venv
+uv sync --dev
+```
+
+2) Run tests:
+
+```sh
+uv run pytest
+```
+
+3) Run the example app locally:
+
+```sh
+uv run gunicorn examples.app:app
+```
+
+4) Add dependencies:
+
+```sh
+# runtime dependency
+uv add <package>
+
+# dev-only dependency
+uv add --dev <package>
+```
+
 <!-- USAGE EXAMPLES -->
 ## Usage
 
